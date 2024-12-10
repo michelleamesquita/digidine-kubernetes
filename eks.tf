@@ -21,6 +21,19 @@ module "eks" {
   }
 }
 
+resource "aws_subnet" "private" {
+  count             = 3  # Número de subnets privadas
+  vpc_id            = module.my-vpc.vpc_id
+  cidr_block        = "10.0.${count.index}.0/24"  # Ajuste conforme sua configuração
+  availability_zone = ["us-east-2a", "us-east-2b", "us-east-2c"][count.index]
+
+  tags = {
+    Name        = "private-subnet-${count.index}"
+    Environment = "development"
+  }
+}
+
+
 resource "aws_security_group" "eks-sg" {
   vpc_id = module.my-vpc.vpc_id
 
