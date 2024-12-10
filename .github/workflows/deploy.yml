@@ -42,34 +42,8 @@ jobs:
           
           # Importar o node group "dev"
           terraform import aws_eks_node_group.dev eks-cluster:dev-20241204000946205400000015
-          
-          # Importar a role para o cluster EKS
-          terraform import aws_iam_role.eks_role eks-role
-          
-          # Importar os policy attachments da role do cluster EKS
-          terraform import aws_iam_role_policy_attachment.eks_worker_node["AmazonEKSWorkerNodePolicy"] eks-role-AmazonEKSWorkerNodePolicy
-          terraform import aws_iam_role_policy_attachment.eks_worker_node["AmazonEC2ContainerRegistryReadOnly"] eks-role-AmazonEC2ContainerRegistryReadOnly
-          terraform import aws_iam_role_policy_attachment.eks_worker_node["AmazonEKS_CNI_Policy"] eks-role-AmazonEKS_CNI_Policy
-          
-          # Importar o security group do EKS
-          terraform import aws_security_group.eks-sg sg-0dd4d81030d8ee461
-          
-          # Importar o security group do Load Balancer
-          terraform import aws_security_group.eks_lb_sg sg-1234567890abcdef
-          
-          # Importar o Load Balancer (caso já exista)
-          terraform import aws_lb.eks_lb lb-1234567890abcdef
-          
-          # Importar as subnets públicas associadas ao VPC
-          terraform import module.my-vpc.aws_subnet.public[0] subnet-02ab00ddbcaf406e8
-          terraform import module.my-vpc.aws_subnet.public[1] subnet-0ed2012a602007132
-          terraform import module.my-vpc.aws_subnet.public[2] subnet-0b94c50396a512ce1
-          
-          # Importar as subnets privadas associadas ao VPC
-          terraform import module.my-vpc.aws_subnet.private[0] subnet-015a02abed8c10ab0
-          terraform import module.my-vpc.aws_subnet.private[1] subnet-0f705d6a6eafa30ed
-          terraform import module.my-vpc.aws_subnet.private[2] subnet-00087526b5c1588bf
 
-
+          # state
+          terraform state push terraform.tfstate
           
           terraform apply -auto-approve
