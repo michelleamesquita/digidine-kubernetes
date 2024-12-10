@@ -162,3 +162,10 @@ resource "null_resource" "apply_k8s" {
     EOT
   }
 }
+
+resource "aws_subnet" "private" {
+  vpc_id            = module.my-vpc.vpc_id  
+  cidr_block        = "10.0.1.0/24"            
+  availability_zone = "us-east-2a"             
+  
+}

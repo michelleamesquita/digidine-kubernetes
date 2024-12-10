@@ -23,9 +23,3 @@ module "my-vpc" {
   }
 }
 
-resource "aws_vpc" "this" {
-  # Add the necessary configuration for your VPC
-  # For example:
-  cidr_block = "10.0.0.0/16"
-  # Add any other required arguments
-}
