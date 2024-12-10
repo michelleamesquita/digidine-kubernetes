@@ -21,6 +21,8 @@ module "eks" {
   }
 }
 
+
+
 resource "aws_security_group" "eks-sg" {
   vpc_id = module.my-vpc.vpc_id
 
@@ -47,6 +49,27 @@ resource "aws_security_group" "eks-sg" {
 
   tags = {
     Name = "eks-security-group"
+  }
+}
+
+resource "aws_eks_node_group" "dev" {
+  cluster_name    = "eks-cluster"
+  node_group_name = "dev"
+  node_role_arn   = aws_iam_role.eks_role.arn
+  subnet_ids      = module.my-vpc.private_subnets
+
+  scaling_config {
+    desired_size = 2
+    max_size     = 3
+    min_size     = 1
+  }
+
+  instance_types = ["t2.small"]
+
+  tags = {
+    Name        = "dev"
+    application = "digidine"
+    environment = "development"
   }
 }
 
