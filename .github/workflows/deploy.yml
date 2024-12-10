@@ -36,12 +36,6 @@ jobs:
         working-directory: .
         run: |
           terraform init
-          
-          # Importar o cluster EKS
-          terraform import module.eks.aws_eks_cluster.this eks-cluster
-          
-          # Importar o node group "dev"
-          terraform import aws_eks_node_group.dev eks-cluster:dev-20241204000946205400000015
 
           # state
           terraform state push terraform.tfstate
