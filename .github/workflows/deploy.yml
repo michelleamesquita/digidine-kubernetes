@@ -48,8 +48,6 @@ jobs:
           # Importar o Load Balancer
           terraform import aws_lb.eks_lb arn:aws:elasticloadbalancing:us-east-2:050451358673:loadbalancer/app/eks-lb/eaff9dc9062b8b4b
           
-          # Importar o Security Group para EKS
-          terraform import aws_security_group.eks-sg sg-0f5c29ea2bc9ff059
           
           # Importar o Security Group para o Load Balancer
           terraform import aws_security_group.eks_lb_sg sg-070ebf82ecea1e181
