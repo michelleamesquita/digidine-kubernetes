@@ -21,53 +21,6 @@ module "eks" {
   }
 }
 
-resource "aws_security_group" "eks-sg" {
-  vpc_id = module.my-vpc.vpc_id
-
-  egress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-  }
-
-  ingress {
-    cidr_blocks = ["10.0.0.0/16"]  # Permitindo tráfego dentro da VPC
-    from_port   = 27017  # Porta do MongoDB
-    to_port     = 27017
-    protocol    = "tcp"
-  }
-
-  ingress {
-    cidr_blocks = ["0.0.0.0/0"]  # Permitindo acesso externo ao Mongo Express
-    from_port   = 8081
-    to_port     = 8081
-    protocol    = "tcp"
-  }
-
-  tags = {
-    Name = "eks-security-group"
-  }
-}
-
-
-
-resource "aws_iam_role" "eks_role" {
-  name = "eks-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "eks.amazonaws.com"
-        }
-      }
-    ]
-  })
-}
 
 resource "aws_iam_role_policy_attachment" "eks_worker_node" {
   for_each = toset([
