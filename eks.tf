@@ -138,6 +138,17 @@ resource "aws_lb" "eks_lb" {
   enable_deletion_protection = false
 }
 
+resource "aws_kms_key" "eks_cluster_key" {
+  description             = "KMS key for EKS cluster encryption"
+  deletion_window_in_days = 30
+  enable_key_rotation     = true
+
+  tags = {
+    Name        = "eks-cluster-key"
+    Environment = "development"
+  }
+}
+
 
 
 # Recurso Null para aplicar manifests Kubernetes
