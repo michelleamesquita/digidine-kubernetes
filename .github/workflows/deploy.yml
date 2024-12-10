@@ -57,7 +57,8 @@ jobs:
           terraform import aws_subnet.private[1] subnet-0f705d6a6eafa30ed
           terraform import aws_subnet.private[2] subnet-00087526b5c1588bf
 
-          terraform import aws_kms_alias.this alias/eks/eks-cluster
+          terraform import aws_kms_key.eks_cluster_key 185000d2-80a2-44f2-bf2e-17a7d76cae8c
+
           terraform import aws_cloudwatch_log_group.this /aws/eks/eks-cluster/cluster
           terraform import aws_security_group.sg_name sg-070ebf82ecea1e181
 
