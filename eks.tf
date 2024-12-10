@@ -170,6 +170,7 @@ resource "aws_subnet" "private" {
   
 }
 
+
 resource "aws_kms_key" "eks_cluster_key" {
   description             = "eks-cluster cluster encryption key"
   deletion_window_in_days = 30
@@ -180,4 +181,3 @@ resource "aws_kms_key" "eks_cluster_key" {
     Application = "eks-cluster"
   }
 }
-
