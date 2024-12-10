@@ -37,7 +37,70 @@ jobs:
         run: |
           terraform init
 
-          terraform state push terraform.tfstate
+          # EKS Managed Node Group
+          terraform import aws_eks_node_group.this eks-cluster:dev-20241204000946205400000015
+          
+          # IAM Role
+          terraform import aws_iam_role.this dev-eks-node-group-20241203235939997000000001
+          
+          # IAM Role Policy Attachments
+          terraform import aws_iam_role_policy_attachment.this[\"arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly\"] dev-eks-node-group-20241203235939997000000001-20241203235943253400000008
+          terraform import aws_iam_role_policy_attachment.this[\"arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy\"] dev-eks-node-group-20241203235939997000000001-2024120323594374810000000c
+          terraform import aws_iam_role_policy_attachment.this[\"arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy\"] dev-eks-node-group-20241203235939997000000001-2024120323594366230000000b
+          
+          # Launch Template
+          terraform import aws_launch_template.this lt-0c3c681febd5434d1
+          
+          # KMS Key
+          terraform import aws_kms_key.this 185000d2-80a2-44f2-bf2e-17a7d76cae8c
+          
+          # KMS Alias
+          terraform import aws_kms_alias.this cluster
+          
+          # VPC
+          terraform import aws_vpc.this vpc-014eb1b4108e08384
+          
+          # Subnets
+          terraform import aws_subnet.private[0] subnet-015a02abed8c10ab0
+          terraform import aws_subnet.private[1] subnet-0f705d6a6eafa30ed
+          terraform import aws_subnet.private[2] subnet-00087526b5c1588bf
+          terraform import aws_subnet.public[0] subnet-02ab00ddbcaf406e8
+          terraform import aws_subnet.public[1] subnet-0ed2012a602007132
+          terraform import aws_subnet.public[2] subnet-0b94c50396a512ce1
+          
+          # Internet Gateway
+          terraform import aws_internet_gateway.this igw-01447a99f4bc6e698
+          
+          # NAT Gateway
+          terraform import aws_nat_gateway.this nat-08ac5682e71a9e484
+          
+          # Route Tables
+          terraform import aws_route_table.private rtb-04441ec531b29b688
+          terraform import aws_route_table.public rtb-0837ce372dd3aedac
+          
+          # Route Table Associations
+          terraform import aws_route_table_association.private[0] rtbassoc-091ff962786bedf4f
+          terraform import aws_route_table_association.private[1] rtbassoc-0f263facb1e87c0ab
+          terraform import aws_route_table_association.private[2] rtbassoc-00253d2765f69459b
+          terraform import aws_route_table_association.public[0] rtbassoc-06d8abc9475fae38d
+          terraform import aws_route_table_association.public[1] rtbassoc-0cec4869016dead69
+          terraform import aws_route_table_association.public[2] rtbassoc-05021dee748736241
+          
+          # Default Security Group
+          terraform import aws_default_security_group.this sg-0dd4d81030d8ee461
+          
+          # Default Network ACL
+          terraform import aws_default_network_acl.this acl-0b8a4c564d5635920
+          
+          # Default Route Table
+          terraform import aws_default_route_table.default rtb-045aafb3a67115e82
+          
+          # Elastic IP (EIP)
+          terraform import aws_eip.nat eipalloc-074431dcb300c3312
+          
+          # Routes
+          terraform import aws_route.private_nat_gateway r-rtb-04441ec531b29b6881080289494
+          terraform import aws_route.public_internet_gateway r-rtb-0837ce372dd3aedac1080289494
 
           
           terraform plan
