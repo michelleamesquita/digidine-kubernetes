@@ -33,39 +33,7 @@ resource "aws_iam_role_policy_attachment" "eks_worker_node" {
   role       = aws_iam_role.eks_role.name
 }
 
-resource "aws_security_group" "eks_lb_sg" {
-  name        = "eks-lb-sg"
-  description = "Security group for the EKS Load Balancer"
-  vpc_id      = module.my-vpc.vpc_id  # Garantir que o VPC correto seja referenciado
 
-  egress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-  }
-
-  ingress {
-    cidr_blocks = ["0.0.0.0/0"]  # Permite tráfego de qualquer lugar, pode ajustar conforme necessário
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-  }
-
-  ingress {
-    cidr_blocks = ["0.0.0.0/0"]  # Permite tráfego de qualquer lugar, pode ajustar conforme necessário
-    from_port   = 27017
-    to_port     = 27017
-    protocol    = "tcp"
-  }
-
-  ingress {
-    cidr_blocks = ["0.0.0.0/0"]  # Permite tráfego de qualquer lugar, pode ajustar conforme necessário
-    from_port   = 8081
-    to_port     = 8081
-    protocol    = "tcp"
-  }
-}
 
 # Atualizando o Load Balancer para usar o Security Group correto
 resource "aws_lb" "eks_lb" {
