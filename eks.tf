@@ -149,6 +149,15 @@ resource "aws_kms_key" "eks_cluster_key" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "this" {
+  name              = "/aws/eks/eks-cluster/cluster"
+  retention_in_days = 90
+
+  tags = {
+    Name        = "eks-cluster-log-group"
+    Environment = "development"
+  }
+}
 
 
 # Recurso Null para aplicar manifests Kubernetes
