@@ -60,7 +60,8 @@ jobs:
           terraform import aws_kms_key.eks_cluster_key 185000d2-80a2-44f2-bf2e-17a7d76cae8c
 
           terraform import aws_cloudwatch_log_group.this /aws/eks/eks-cluster/cluster
-          terraform import aws_security_group.sg_name sg-070ebf82ecea1e181
+          terraform import aws_security_group.eks_lb_sg sg-070ebf82ecea1e181
+
 
           
           terraform apply -auto-approve
