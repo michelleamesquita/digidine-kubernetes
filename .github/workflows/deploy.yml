@@ -37,43 +37,10 @@ jobs:
         run: |
           terraform init
 
-          # Importar o IAM Role
-          terraform import aws_iam_role.eks_role eks-role
-          
-          # Importar as políticas anexadas ao IAM Role
-          terraform import aws_iam_role_policy_attachment.eks_worker_node[0] eks-role/arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
-          terraform import aws_iam_role_policy_attachment.eks_worker_node[1] eks-role/arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
-          terraform import aws_iam_role_policy_attachment.eks_worker_node[2] eks-role/arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
-          
-          # Importar o Load Balancer
-          terraform import aws_lb.eks_lb arn:aws:elasticloadbalancing:us-east-2:050451358673:loadbalancer/app/eks-lb/eaff9dc9062b8b4b
-          
-          
-          # Importar o Security Group para o Load Balancer
-          terraform import aws_security_group.eks_lb_sg sg-070ebf82ecea1e181
-          
-          # Importar os Subnets
-          terraform import aws_subnet.private[0] subnet-015a02abed8c10ab0
-          terraform import aws_subnet.private[1] subnet-0f705d6a6eafa30ed
-          terraform import aws_subnet.private[2] subnet-00087526b5c1588bf
-
-          terraform import aws_kms_key.eks_cluster_key 185000d2-80a2-44f2-bf2e-17a7d76cae8c
-
-          terraform import aws_cloudwatch_log_group.this /aws/eks/eks-cluster/cluster
-
           terraform state push terraform.tfstate
 
-
-          # Verificar se o recurso já está no estado
-          if ! terraform state list | grep -q aws_security_group.eks_lb_sg; then
-            echo "Importando aws_security_group.eks_lb_sg..."
-            terraform import aws_security_group.eks_lb_sg sg-070ebf82ecea1e181
-          else
-            echo "aws_security_group.eks_lb_sg já está no estado. Não é necessário importar novamente."
-          fi
           
           terraform plan
-
 
           
           terraform apply -auto-approve
