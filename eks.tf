@@ -192,3 +192,41 @@ resource "aws_cloudwatch_log_group" "this" {
   }
 }
 
+resource "aws_security_group" "eks_lb_sg" {
+  name        = "eks-lb-sg"                       # Nome do SG
+  description = "Security group for the EKS Load Balancer"
+  vpc_id      = "vpc-014eb1b4108e08384"           # ID do VPC associado
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 27017
+    to_port     = 27017
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "eks-lb-sg"
+  }
+}
+
