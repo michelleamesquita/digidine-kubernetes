@@ -21,6 +21,53 @@ module "eks" {
   }
 }
 
+resource "aws_security_group" "eks-sg" {
+  vpc_id = module.my-vpc.vpc_id
+
+  egress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+  }
+
+  ingress {
+    cidr_blocks = ["10.0.0.0/16"]  # Permitindo tráfego dentro da VPC
+    from_port   = 27017  # Porta do MongoDB
+    to_port     = 27017
+    protocol    = "tcp"
+  }
+
+  ingress {
+    cidr_blocks = ["0.0.0.0/0"]  # Permitindo acesso externo ao Mongo Express
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+  }
+
+  tags = {
+    Name = "eks-security-group"
+  }
+}
+
+
+
+resource "aws_iam_role" "eks_role" {
+  name = "eks-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "eks.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
 
 resource "aws_iam_role_policy_attachment" "eks_worker_node" {
   for_each = toset([
@@ -33,7 +80,39 @@ resource "aws_iam_role_policy_attachment" "eks_worker_node" {
   role       = aws_iam_role.eks_role.name
 }
 
+resource "aws_security_group" "eks_lb_sg" {
+  name        = "eks-lb-sg"
+  description = "Security group for the EKS Load Balancer"
+  vpc_id      = module.my-vpc.vpc_id  # Garantir que o VPC correto seja referenciado
 
+  egress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+  }
+
+  ingress {
+    cidr_blocks = ["0.0.0.0/0"]  # Permite tráfego de qualquer lugar, pode ajustar conforme necessário
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+  }
+
+  ingress {
+    cidr_blocks = ["0.0.0.0/0"]  # Permite tráfego de qualquer lugar, pode ajustar conforme necessário
+    from_port   = 27017
+    to_port     = 27017
+    protocol    = "tcp"
+  }
+
+  ingress {
+    cidr_blocks = ["0.0.0.0/0"]  # Permite tráfego de qualquer lugar, pode ajustar conforme necessário
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+  }
+}
 
 # Atualizando o Load Balancer para usar o Security Group correto
 resource "aws_lb" "eks_lb" {
@@ -83,88 +162,3 @@ resource "null_resource" "apply_k8s" {
     EOT
   }
 }
-
-resource "aws_subnet" "private" {
-  vpc_id            = module.my-vpc.vpc_id  
-  cidr_block        = "10.0.1.0/24"            
-  availability_zone = "us-east-2a"             
-  
-}
-
-
-resource "aws_kms_key" "eks_cluster_key" {
-  description             = "eks-cluster cluster encryption key"
-  deletion_window_in_days = 30
-  enable_key_rotation     = true
-
-  tags = {
-    Environment = "production"
-    Application = "eks-cluster"
-  }
-}
-
-resource "aws_cloudwatch_log_group" "this" {
-  name              = "/aws/eks/eks-cluster/cluster"
-  retention_in_days = 90
-
-  tags = {
-    Environment = "production"
-    Application = "eks-cluster"
-  }
-}
-
-resource "aws_security_group" "eks_lb_sg" {
-  name        = "eks-lb-sg"                       # Nome do SG
-  description = "Security group for the EKS Load Balancer"
-  vpc_id      = "vpc-014eb1b4108e08384"           # ID do VPC associado
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 27017
-    to_port     = 27017
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 8081
-    to_port     = 8081
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "eks-lb-sg"
-  }
-}
-
-resource "aws_iam_role" "eks_role" {
-  name               = "eks-role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Service = "eks.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      }
-    ]
-  })
-}
-
-
