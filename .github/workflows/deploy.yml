@@ -60,8 +60,19 @@ jobs:
           terraform import aws_kms_key.eks_cluster_key 185000d2-80a2-44f2-bf2e-17a7d76cae8c
 
           terraform import aws_cloudwatch_log_group.this /aws/eks/eks-cluster/cluster
-          terraform import aws_security_group.eks_lb_sg sg-070ebf82ecea1e181
 
+          terraform state push terraform.tfstate
+
+
+          # Verificar se o recurso já está no estado
+          if ! terraform state list | grep -q aws_security_group.eks_lb_sg; then
+            echo "Importando aws_security_group.eks_lb_sg..."
+            terraform import aws_security_group.eks_lb_sg sg-070ebf82ecea1e181
+          else
+            echo "aws_security_group.eks_lb_sg já está no estado. Não é necessário importar novamente."
+          fi
+          
+          terraform plan
 
 
           
