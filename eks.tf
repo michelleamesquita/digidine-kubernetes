@@ -169,3 +169,15 @@ resource "aws_subnet" "private" {
   availability_zone = "us-east-2a"             
   
 }
+
+
+resource "aws_kms_key" "eks_cluster_key" {
+  description             = "eks-cluster cluster encryption key"
+  deletion_window_in_days = 30
+  enable_key_rotation     = true
+
+  tags = {
+    Environment = "production"
+    Application = "eks-cluster"
+  }
+}
