@@ -181,3 +181,14 @@ resource "aws_kms_key" "eks_cluster_key" {
     Application = "eks-cluster"
   }
 }
+
+resource "aws_cloudwatch_log_group" "this" {
+  name              = "/aws/eks/eks-cluster/cluster"
+  retention_in_days = 90
+
+  tags = {
+    Environment = "production"
+    Application = "eks-cluster"
+  }
+}
+
